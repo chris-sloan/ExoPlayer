@@ -1,12 +1,12 @@
 [
   {
-    "name": "Test",
+    "name": "ITV Simulcast",
     "samples": [
       {
-        "name": "",
-        "uri": "",
+        "name": "ITV",
+        "uri": "https://itv1simamobile.itv.com/playout/mb01/itv1/cenc.isml/.mpd?hdnea=st=1621948785~exp=1621970385~acl=/*~data=nohubplus~hmac=8fb414e764895c378fd9157de1ac9ce74cd15fdcd7eca601f165c9761ffb8bd9",
         "drm_scheme": "widevine",
-        "drm_license_uri": ""
+        "drm_license_uri": "https://itvpnp.live.ott.irdeto.com/Widevine/getlicense?CrmId=itvpnp&AccountId=itvpnp&ContentId=ITV1"
       }
     ]
   },
