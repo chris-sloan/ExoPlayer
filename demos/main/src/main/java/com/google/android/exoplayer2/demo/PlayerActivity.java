@@ -19,6 +19,7 @@ import static com.google.android.exoplayer2.util.Assertions.checkNotNull;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.KeyEvent;
@@ -324,16 +325,16 @@ public class PlayerActivity extends AppCompatActivity
     ads.add("https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dlinear&correlator=");
 
     List<ContentBreak> contentBreaks = new ArrayList<>();
-    contentBreaks.add(new ContentBreak(0L, 30_000L, ads));
-    contentBreaks.add(new ContentBreak(30_000L, 60_000L, ads));
-    contentBreaks.add(new ContentBreak(60_000L, 90_000L, ads));
-    contentBreaks.add(new ContentBreak(90_000L, 120_000L, ads));
+    contentBreaks.add(new ContentBreak(0L, 30_000L, ads, "Id1"));
+    contentBreaks.add(new ContentBreak(30_000L, 60_000L, ads, "Id2"));
+    contentBreaks.add(new ContentBreak(60_000L, 90_000L, ads, "Id3"));
+    contentBreaks.add(new ContentBreak(90_000L, 120_000L, ads, "Id4"));
 
     for (ContentBreak contentBreak: contentBreaks) {
       for (String ad: contentBreak.adTags) {
         MediaItem mediaItem = new MediaItem.Builder()
             .setUri(mainContentUrl)
-            .setAdTagUri(ad)
+            .setAdTagUri(Uri.parse(ad), contentBreak.adId)
             .setClipStartPositionMs(contentBreak.contentChunkStart)
             .setClipEndPositionMs(contentBreak.contentChunkEnd)
             .setDrmPlayClearContentWithoutKey(true)
@@ -353,11 +354,13 @@ public class PlayerActivity extends AppCompatActivity
     private final Long contentChunkStart;
     private final Long contentChunkEnd;
     private final List<String> adTags;
+    private final String adId;
 
-    public ContentBreak(Long contentChunkStart, Long contentChunkEnd, List<String> adTags) {
+    public ContentBreak(Long contentChunkStart, Long contentChunkEnd, List<String> adTags, String adId) {
       this.contentChunkStart = contentChunkStart;
       this.contentChunkEnd = contentChunkEnd;
       this.adTags = adTags;
+      this.adId = adId;
     }
   }
 
