@@ -255,7 +255,8 @@ public class PlayerActivity extends AppCompatActivity
     if (player == null) {
       Intent intent = getIntent();
 
-      mediaItems = createMediaItems(intent);
+//      mediaItems = createMediaItems(intent);
+      mediaItems = createMediaItems();
       if (mediaItems.isEmpty()) {
         return false;
       }
@@ -293,6 +294,123 @@ public class PlayerActivity extends AppCompatActivity
     player.prepare();
     updateButtonVisibility();
     return true;
+  }
+
+  private List<MediaItem> createMediaItems() {
+    /**
+     *
+     * The idea is to create a list of media items so that the playlist is compiled as follows :
+     *
+     *  Pre-roll Ad
+     *  Pre-roll Ad
+     *  Main Content (30 seconds each)
+     *  Mid-roll Ad
+     *  Mid-roll Ad
+     *  Main Content
+     *  Mid-roll Ad
+     *  Mid-roll Ad
+     *  Main Content
+     *  Mid-roll Ad
+     *  Mid-roll Ad
+     *  Main Content
+     *
+     */
+    List<MediaItem> mediaItems = new ArrayList<>();
+    String mainContentUrl = "https://storage.googleapis.com/wvmedia/cenc/vp9/tears/tears.mpd";
+    String licenseKeyUrl = "https://proxy.uat.widevine.com/proxy?provider=widevine_test";
+
+    String ads = "<vmap:VMAP xmlns:vmap=\"http://www.iab.net/videosuite/vmap\" version=\"1.0\">\n"
+        + "<vmap:AdBreak timeOffset=\"start\" breakType=\"linear\" breakId=\"preroll\">\n"
+        + "<vmap:AdSource id=\"preroll-ad-1\" allowMultipleAds=\"false\" followRedirects=\"true\">\n"
+        + "<vmap:AdTagURI templateType=\"vast4\">\n"
+        + "<![CDATA[ https://tom.itv.com/itv/tserver/random=1955446721837844946/supertag=dflt,itv.2_4269_0018/area=itvplayer.video/vfunapod=true/hdevid=sailfish/hmod=pixel/hman=google/osver=10/dm=2c7488a8-23aa-4613-b7db-c526e1150311/pv=android.9.12.0-snapshot/zgid=f3c193b2-0cbd-47de-a084-96a2c89363c2/source=catchup/us=reg/arp=none/tparts=4/tdur=2994/player=x/os=android/pm=free/chanbrand=itv2/site=itv.mobile/size=videoident/adpos=iden1/breaknum=0/viewid=0.0333552b-c297-4fda-99e0-2ab430191be7/generic=0333552b-c297-4fda-99e0-2ab430191be7/plist=i2.s1.pm1.pr3.m8.po6/plfcid=43896/linked_fcid=43896/platform=mobile/temphint=i-0de2558893be7a623/default=defaultvideo ]]>\n"
+        + "</vmap:AdTagURI>\n"
+        + "</vmap:AdSource>\n"
+        + "</vmap:AdBreak>\n"
+        + "<vmap:AdBreak timeOffset=\"start\" breakType=\"linear\" breakId=\"preroll\">\n"
+        + "<vmap:AdSource id=\"preroll-ad-2\" allowMultipleAds=\"false\" followRedirects=\"true\">\n"
+        + "<vmap:AdTagURI templateType=\"vast4\">\n"
+        + "<![CDATA[ https://tom.itv.com/itv/tserver/random=1955446721837844946/supertag=dflt,itv.2_4269_0018/area=itvplayer.video/vfunapod=true/hdevid=sailfish/hmod=pixel/hman=google/osver=10/dm=2c7488a8-23aa-4613-b7db-c526e1150311/pv=android.9.12.0-snapshot/zgid=f3c193b2-0cbd-47de-a084-96a2c89363c2/source=catchup/us=reg/arp=none/tparts=4/tdur=2994/player=x/os=android/pm=free/chanbrand=itv2/site=itv.mobile/size=video/adpos=2/breaknum=0/viewid=0.0333552b-c297-4fda-99e0-2ab430191be7/generic=0333552b-c297-4fda-99e0-2ab430191be7/plist=i2.s1.pm1.pr3.m8.po6/plfcid=43896/linked_fcid=43896/platform=mobile/temphint=i-0de2558893be7a623/default=defaultvideo ]]>\n"
+        + "</vmap:AdTagURI>\n"
+        + "</vmap:AdSource>\n"
+        + "</vmap:AdBreak>\n"
+        + "<vmap:AdBreak timeOffset=\"00:00:10.000\" breakType=\"linear\" breakId=\"midroll-1\">\n"
+        + "<vmap:AdSource id=\"midroll-1-ad-1\" allowMultipleAds=\"false\" followRedirects=\"true\">\n"
+        + "<vmap:AdTagURI templateType=\"vast3\">\n"
+        + "<![CDATA[ https://tom.itv.com/itv/tserver/random=1955446721837844946/supertag=dflt,itv.2_4269_0018/area=itvplayer.video/vfunapod=true/hdevid=sailfish/hmod=pixel/hman=google/osver=10/dm=2c7488a8-23aa-4613-b7db-c526e1150311/pv=android.9.12.0-snapshot/zgid=f3c193b2-0cbd-47de-a084-96a2c89363c2/source=catchup/us=reg/arp=none/tparts=4/tdur=2994/player=x/os=android/pm=free/chanbrand=itv2/site=itv.mobile/size=videosponsor/adpos=spon1/breaknum=1/viewid=spon1.1.0333552b-c297-4fda-99e0-2ab430191be7/generic=0333552b-c297-4fda-99e0-2ab430191be7/plist=i2.s1.pm1.pr3.m8.po6/plfcid=43896/linked_fcid=43896/platform=mobile/temphint=i-0de2558893be7a623/default=defaultvideo ]]>\n"
+        + "</vmap:AdTagURI>\n"
+        + "</vmap:AdSource>\n"
+        + "</vmap:AdBreak>\n"
+        + "<vmap:AdBreak timeOffset=\"00:00:10.000\" breakType=\"linear\" breakId=\"midroll-1\">\n"
+        + "<vmap:AdSource id=\"midroll-1-ad-2\" allowMultipleAds=\"false\" followRedirects=\"true\">\n"
+        + "<vmap:AdTagURI templateType=\"vast3\">\n"
+        + "<![CDATA[ https://tom.itv.com/itv/tserver/random=1955446721837844946/supertag=dflt,itv.2_4269_0018/area=itvplayer.video/vfunapod=true/hdevid=sailfish/hmod=pixel/hman=google/osver=10/dm=2c7488a8-23aa-4613-b7db-c526e1150311/pv=android.9.12.0-snapshot/zgid=f3c193b2-0cbd-47de-a084-96a2c89363c2/source=catchup/us=reg/arp=none/tparts=4/tdur=2994/player=x/os=android/pm=free/chanbrand=itv2/site=itv.mobile/size=video/adpos=1/breaknum=1/viewid=1.0333552b-c297-4fda-99e0-2ab430191be7/generic=0333552b-c297-4fda-99e0-2ab430191be7/plist=i2.s1.pm1.pr3.m8.po6/plfcid=43896/linked_fcid=43896/platform=mobile/temphint=i-0de2558893be7a623/default=defaultvideo ]]>\n"
+        + "</vmap:AdTagURI>\n"
+        + "</vmap:AdSource>\n"
+        + "</vmap:AdBreak>\n"
+        + "<vmap:AdBreak timeOffset=\"00:00:20.000\" breakType=\"linear\" breakId=\"midroll-2\">\n"
+        + "<vmap:AdSource id=\"midroll-2-ad-1\" allowMultipleAds=\"false\" followRedirects=\"true\">\n"
+        + "<vmap:AdTagURI templateType=\"vast3\">\n"
+        + "<![CDATA[ https://pubads.g.doubleclick.net/gampad/ads?slotname=/124319096/external/ad_rule_samples&sz=640x480&ciu_szs=300x250&cust_params=deployment%3Ddevsite%26sample_ar%3Dpremidpostlongpod&url=&unviewed_position_start=1&output=xml_vast3&impl=s&env=vp&gdfp_req=1&ad_rule=0&cue=20000&vad_type=linear&vpos=midroll&pod=3&mridx=2&rmridx=9&ppos=1&min_ad_duration=0&max_ad_duration=30000&vrid=7096&cmsid=496&video_doc_id=short_tencue&kfa=0&tfcd=0 ]]>\n"
+        + "</vmap:AdTagURI>\n"
+        + "</vmap:AdSource>\n"
+        + "</vmap:AdBreak>\n"
+        + "<vmap:AdBreak timeOffset=\"00:00:20.000\" breakType=\"linear\" breakId=\"midroll-2\">\n"
+        + "<vmap:AdSource id=\"midroll-2-ad-2\" allowMultipleAds=\"false\" followRedirects=\"true\">\n"
+        + "<vmap:AdTagURI templateType=\"vast3\">\n"
+        + "<![CDATA[ https://pubads.g.doubleclick.net/gampad/ads?slotname=/124319096/external/ad_rule_samples&sz=640x480&ciu_szs=300x250&cust_params=deployment%3Ddevsite%26sample_ar%3Dpremidpostlongpod&url=&unviewed_position_start=1&output=xml_vast3&impl=s&env=vp&gdfp_req=1&ad_rule=0&cue=20000&vad_type=linear&vpos=midroll&pod=3&mridx=2&rmridx=9&ppos=2&min_ad_duration=0&max_ad_duration=30000&vrid=7096&cmsid=496&video_doc_id=short_tencue&kfa=0&tfcd=0 ]]>\n"
+        + "</vmap:AdTagURI>\n"
+        + "</vmap:AdSource>\n"
+        + "</vmap:AdBreak>\n"
+        + "<vmap:AdBreak timeOffset=\"00:00:30.000\" breakType=\"linear\" breakId=\"midroll-3\">\n"
+        + "<vmap:AdSource id=\"midroll-3-ad-1\" allowMultipleAds=\"false\" followRedirects=\"true\">\n"
+        + "<vmap:AdTagURI templateType=\"vast3\">\n"
+        + "<![CDATA[ https://pubads.g.doubleclick.net/gampad/ads?slotname=/124319096/external/ad_rule_samples&sz=640x480&ciu_szs=300x250&cust_params=deployment%3Ddevsite%26sample_ar%3Dpremidpostlongpod&url=&unviewed_position_start=1&output=xml_vast3&impl=s&env=vp&gdfp_req=1&ad_rule=0&cue=30000&vad_type=linear&vpos=midroll&pod=4&mridx=3&rmridx=8&ppos=1&min_ad_duration=0&max_ad_duration=30000&vrid=7096&cmsid=496&video_doc_id=short_tencue&kfa=0&tfcd=0 ]]>\n"
+        + "</vmap:AdTagURI>\n"
+        + "</vmap:AdSource>\n"
+        + "</vmap:AdBreak>\n"
+        + "<vmap:AdBreak timeOffset=\"00:00:30.000\" breakType=\"linear\" breakId=\"midroll-3\">\n"
+        + "<vmap:AdSource id=\"midroll-3-ad-2\" allowMultipleAds=\"false\" followRedirects=\"true\">\n"
+        + "<vmap:AdTagURI templateType=\"vast3\">\n"
+        + "<![CDATA[ https://pubads.g.doubleclick.net/gampad/ads?slotname=/124319096/external/ad_rule_samples&sz=640x480&ciu_szs=300x250&cust_params=deployment%3Ddevsite%26sample_ar%3Dpremidpostlongpod&url=&unviewed_position_start=1&output=xml_vast3&impl=s&env=vp&gdfp_req=1&ad_rule=0&cue=30000&vad_type=linear&vpos=midroll&pod=4&mridx=3&rmridx=8&ppos=2&min_ad_duration=0&max_ad_duration=30000&vrid=7096&cmsid=496&video_doc_id=short_tencue&kfa=0&tfcd=0 ]]>\n"
+        + "</vmap:AdTagURI>\n"
+        + "</vmap:AdSource>\n"
+        + "</vmap:AdBreak>\n"
+        + "<vmap:AdBreak timeOffset=\"00:00:40.000\" breakType=\"linear\" breakId=\"midroll-4\">\n"
+        + "<vmap:AdSource id=\"midroll-4-ad-1\" allowMultipleAds=\"false\" followRedirects=\"true\">\n"
+        + "<vmap:AdTagURI templateType=\"vast3\">\n"
+        + "<![CDATA[ https://pubads.g.doubleclick.net/gampad/ads?slotname=/124319096/external/ad_rule_samples&sz=640x480&ciu_szs=300x250&cust_params=deployment%3Ddevsite%26sample_ar%3Dpremidpostlongpod&url=&unviewed_position_start=1&output=xml_vast3&impl=s&env=vp&gdfp_req=1&ad_rule=0&cue=40000&vad_type=linear&vpos=midroll&pod=5&mridx=4&rmridx=7&ppos=1&min_ad_duration=0&max_ad_duration=30000&vrid=7096&cmsid=496&video_doc_id=short_tencue&kfa=0&tfcd=0 ]]>\n"
+        + "</vmap:AdTagURI>\n"
+        + "</vmap:AdSource>\n"
+        + "</vmap:AdBreak>\n"
+        + "<vmap:AdBreak timeOffset=\"00:00:40.000\" breakType=\"linear\" breakId=\"midroll-4\">\n"
+        + "<vmap:AdSource id=\"midroll-4-ad-2\" allowMultipleAds=\"false\" followRedirects=\"true\">\n"
+        + "<vmap:AdTagURI templateType=\"vast3\">\n"
+        + "<![CDATA[ https://pubads.g.doubleclick.net/gampad/ads?slotname=/124319096/external/ad_rule_samples&sz=640x480&ciu_szs=300x250&cust_params=deployment%3Ddevsite%26sample_ar%3Dpremidpostlongpod&url=&unviewed_position_start=1&output=xml_vast3&impl=s&env=vp&gdfp_req=1&ad_rule=0&cue=40000&vad_type=linear&vpos=midroll&pod=5&mridx=4&rmridx=7&ppos=2&min_ad_duration=0&max_ad_duration=30000&vrid=7096&cmsid=496&video_doc_id=short_tencue&kfa=0&tfcd=0 ]]>\n"
+        + "</vmap:AdTagURI>\n"
+        + "</vmap:AdSource>\n"
+        + "</vmap:AdBreak>\n"
+        + "<vmap:AdBreak timeOffset=\"end\" breakType=\"linear\" breakId=\"postroll\">\n"
+        + "<vmap:AdSource id=\"postroll-ad-1\" allowMultipleAds=\"false\" followRedirects=\"true\">\n"
+        + "<vmap:AdTagURI templateType=\"vast3\">\n"
+        + "<![CDATA[ https://pubads.g.doubleclick.net/gampad/ads?slotname=/124319096/external/ad_rule_samples&sz=640x480&ciu_szs=300x250&cust_params=deployment%3Ddevsite%26sample_ar%3Dpremidpostlongpod&url=&unviewed_position_start=1&output=xml_vast3&impl=s&env=vp&gdfp_req=1&ad_rule=0&vad_type=linear&vpos=postroll&pod=12&ppos=1&lip=true&min_ad_duration=0&max_ad_duration=30000&vrid=7096&cmsid=496&video_doc_id=short_tencue&kfa=0&tfcd=0 ]]>\n"
+        + "</vmap:AdTagURI>\n"
+        + "</vmap:AdSource>\n"
+        + "</vmap:AdBreak>\n"
+        + "</vmap:VMAP>";
+
+        MediaItem mediaItem = new MediaItem.Builder()
+            .setUri(mainContentUrl)
+            .setAdTagUri(Util.getDataUriForString("text/xml", ads))
+            .setDrmPlayClearContentWithoutKey(true)
+            .setDrmSessionForClearPeriods(true)
+            .setDrmLicenseUri(licenseKeyUrl)
+            .setDrmUuid(C.WIDEVINE_UUID)
+            .build();
+
+        mediaItems.add(mediaItem);
+
+    return mediaItems;
   }
 
   private List<MediaItem> createMediaItems(Intent intent) {
