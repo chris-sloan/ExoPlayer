@@ -255,7 +255,8 @@ public class PlayerActivity extends AppCompatActivity
     if (player == null) {
       Intent intent = getIntent();
 
-      mediaItems = createMediaItems(intent);
+//      mediaItems = createMediaItems(intent);
+      mediaItems = createMediaItems();
       if (mediaItems.isEmpty()) {
         return false;
       }
@@ -293,6 +294,71 @@ public class PlayerActivity extends AppCompatActivity
     player.prepare();
     updateButtonVisibility();
     return true;
+  }
+
+  private List<MediaItem> createMediaItems() {
+    /**
+     *
+     * The idea is to create a list of media items so that the playlist is compiled as follows :
+     *
+     *  Pre-roll Ad
+     *  Pre-roll Ad
+     *  Main Content (30 seconds each)
+     *  Mid-roll Ad
+     *  Mid-roll Ad
+     *  Main Content
+     *  Mid-roll Ad
+     *  Mid-roll Ad
+     *  Main Content
+     *  Mid-roll Ad
+     *  Mid-roll Ad
+     *  Main Content
+     *
+     */
+    List<MediaItem> mediaItems = new ArrayList<>();
+    String mainContentUrl = "https://storage.googleapis.com/wvmedia/cenc/vp9/tears/tears.mpd";
+    String licenseKeyUrl = "https://proxy.uat.widevine.com/proxy?provider=widevine_test";
+
+    List<String> ads = new ArrayList<>();
+    ads.add("https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dlinear&correlator=");
+    ads.add("https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dlinear&correlator=");
+
+    List<ContentBreak> contentBreaks = new ArrayList<>();
+    contentBreaks.add(new ContentBreak(0L, 30_000L, ads));
+    contentBreaks.add(new ContentBreak(30_000L, 60_000L, ads));
+    contentBreaks.add(new ContentBreak(60_000L, 90_000L, ads));
+    contentBreaks.add(new ContentBreak(90_000L, 120_000L, ads));
+
+    for (ContentBreak contentBreak: contentBreaks) {
+      for (String ad: contentBreak.adTags) {
+        MediaItem mediaItem = new MediaItem.Builder()
+            .setUri(mainContentUrl)
+            .setAdTagUri(ad)
+            .setClipStartPositionMs(contentBreak.contentChunkStart)
+            .setClipEndPositionMs(contentBreak.contentChunkEnd)
+            .setDrmPlayClearContentWithoutKey(true)
+            .setDrmSessionForClearPeriods(true)
+            .setDrmLicenseUri(licenseKeyUrl)
+            .setDrmUuid(C.WIDEVINE_UUID)
+            .build();
+
+        mediaItems.add(mediaItem);
+      }
+    }
+
+    return mediaItems;
+  }
+
+  private class ContentBreak {
+    private final Long contentChunkStart;
+    private final Long contentChunkEnd;
+    private final List<String> adTags;
+
+    public ContentBreak(Long contentChunkStart, Long contentChunkEnd, List<String> adTags) {
+      this.contentChunkStart = contentChunkStart;
+      this.contentChunkEnd = contentChunkEnd;
+      this.adTags = adTags;
+    }
   }
 
   private List<MediaItem> createMediaItems(Intent intent) {
